@@ -17,10 +17,23 @@ module Footnotes
   # behavior commenting the after_filter line below and putting it in Your
   # application. Then you can cherrypick in which actions it will appear.
   #
+  # To skip filters by exception use:
+  #
+  #   skip_before_filter :rails_footnotes_before_filter
+  #   skip_after_filter :rails_footnotes_after_filter
+  #
   module RailsFootnotesExtension
     def self.included(base)
-      base.prepend_before_filter Footnotes::BeforeFilter
-      base.after_filter Footnotes::AfterFilter
+      base.prepend_before_filter :rails_footnotes_before_filter
+      base.after_filter :rails_footnotes_after_filter
+    end
+    
+    def rails_footnotes_before_filter
+      Footnotes::BeforeFilter.filter(self)
+    end
+    
+    def rails_footnotes_after_filter
+      Footnotes::AfterFilter.filter(self)
     end
   end
 
